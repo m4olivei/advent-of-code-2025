@@ -1,3 +1,5 @@
+import copy
+
 def find_adjacent(rows, row, col):
     num_adjacent = 0
     for delta_x in range(-1, 2):
@@ -23,12 +25,22 @@ if __name__ == "__main__":
             line = line.strip("\n")
             columns = list(map(str, line))
             rows.append(columns)
-        num_accessible_paper = 0
-        for index_row, row in enumerate(rows):
-            for index_column, column in enumerate(row):
-                if rows[index_row][index_column] != '@':
-                    continue
-                num_adjacent = find_adjacent(rows, index_row, index_column)
-                if num_adjacent < 4:
-                    num_accessible_paper += 1
-    print('Num accessible paper:', num_accessible_paper)
+        rolls_removed = 0
+        while True:
+            num_accessible_paper = 0
+            transition = copy.deepcopy(rows)
+            for index_row, row in enumerate(rows):
+                for index_column, column in enumerate(row):
+                    if rows[index_row][index_column] != '@':
+                        continue
+                    num_adjacent = find_adjacent(rows, index_row, index_column)
+                    if num_adjacent < 4:
+                        num_accessible_paper += 1
+                        transition[index_row][index_column] = '.'
+            if num_accessible_paper == 0:
+                break
+            else:
+                rolls_removed += num_accessible_paper
+                rows = copy.deepcopy(transition)
+
+    print('Rolls removed:', rolls_removed)
